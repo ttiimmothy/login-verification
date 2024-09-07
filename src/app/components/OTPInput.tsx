@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/app/components/ui/button"
+import { Input } from "@/app/components/ui/input"
 import { AlertCircle } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert"
 
 export function OTPInput() {
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
