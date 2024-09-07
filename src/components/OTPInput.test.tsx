@@ -58,7 +58,7 @@ describe('OTPInput', () => {
 
     await waitFor(() => {
       expect(getByText('Verification Error')).toBeDefined();
-      // expect(getByText('Verification Error')).toBeInTheDocument();
+      // expect(getByText('Verification Error') as HTMLElement).toBeInTheDocument();
     });
   });
 });
