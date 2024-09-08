@@ -3,13 +3,23 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import {OTPInput} from './OTPInput';
 
+// Mock the next/navigation module
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
   }),
 }));
 
+// Mock the fetch function
+global.fetch = jest.fn();
+
+const mockFetch = global.fetch as jest.MockedFunction<typeof global.fetch>;
+
 describe('OTPInput', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('renders 6 input fields', () => {
     const { getAllByRole } = render(<OTPInput />);
     const inputs = getAllByRole('textbox') as HTMLInputElement[];
@@ -45,12 +55,10 @@ describe('OTPInput', () => {
   });
 
   it('displays error message on verification failure', async () => {
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        ok: false,
-        json: () => Promise.resolve({ message: 'Verification failed' }),
-      }) as Promise<Response>
-    );
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      json: () => Promise.resolve({ message: 'Verification failed' }),
+    } as Response);
 
     const { getByText, getByRole } = render(<OTPInput />);
     const verifyButton = getByRole('button', { name: /verify/i });
@@ -59,6 +67,59 @@ describe('OTPInput', () => {
     await waitFor(() => {
       expect(getByText('Verification Error')).toBeDefined();
       // expect(getByText('Verification Error') as HTMLElement).toBeInTheDocument();
+    });
+  });
+
+  it('redirects on successful verification', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ message: 'Verification successful' }),
+    } as Response);
+
+    const { getByText, getAllByRole } = render(<OTPInput />);
+    const inputs = getAllByRole('textbox');
+    inputs.forEach((input, index) => {
+      fireEvent.change(input, { target: { value: String(index + 1) } });
+    });
+
+    const verifyButton = getByText('Verify');
+    fireEvent.click(verifyButton);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(`${process.env.NEXT_PUBLIC_API_URL}/api/verify`, expect.any(Object));
+    });
+  });
+
+  it('submits the form when Enter key is pressed', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ message: 'Verification successful' }),
+    } as Response);
+
+    const { getAllByRole } = render(<OTPInput />);
+    const inputs = getAllByRole('textbox');
+    inputs.forEach((input, index) => {
+      fireEvent.change(input, { target: { value: String(index + 1) } });
+    });
+
+    fireEvent.keyDown(inputs[5], { key: 'Enter', code: 'Enter' });
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(`${process.env.NEXT_PUBLIC_API_URL}/api/verify`, expect.any(Object));
+    });
+  });
+
+  it('does not submit the form when a key other than Enter is pressed', async () => {
+    const { getAllByRole } = render(<OTPInput />);
+    const inputs = getAllByRole('textbox');
+    inputs.forEach((input, index) => {
+      fireEvent.change(input, { target: { value: String(index + 1) } });
+    });
+
+    fireEvent.keyDown(inputs[5], { key: 'A', code: 'KeyA' });
+
+    await waitFor(() => {
+      expect(global.fetch).not.toHaveBeenCalled();
     });
   });
 });
