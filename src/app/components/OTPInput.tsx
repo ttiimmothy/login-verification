@@ -44,7 +44,7 @@ export function OTPInput() {
     setError('')
     const code = otp.join('')
     try {
-      const response = await fetch('/api/verify', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code })
