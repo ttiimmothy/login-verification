@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, KeyboardEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from "@/app/components/ui/button"
 import { Input } from "@/app/components/ui/input"
@@ -59,6 +59,13 @@ export function OTPInput() {
     }
   }
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleSubmit()
+    }
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="p-6 bg-white rounded-lg shadow-lg">
@@ -69,6 +76,7 @@ export function OTPInput() {
               key={index}
               type="text"
               maxLength={1}
+              onKeyDown={handleKeyDown}
               value={data}
               ref={el => {
                 if (el) {
