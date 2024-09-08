@@ -1,4 +1,4 @@
-import {OTPInput} from "@/app/components/OTPInput";
+import {OTPInput} from "@/components/OTPInput";
 
 export default function Home() {
   return (

@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect, KeyboardEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from "@/app/components/ui/button"
-import { Input } from "@/app/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { AlertCircle } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 export function OTPInput() {
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
@@ -25,8 +25,17 @@ export function OTPInput() {
     setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))])
     setTouched([...touched.map((t, idx) => (idx === index ? true : t))])
 
-    if (element.nextSibling && element.value !== '') {
-      (element.nextSibling as HTMLInputElement).focus()
+    // if the input is not empty, focus the next input
+    // if (element.nextSibling && element.value !== '') {
+    //   (element.nextSibling as HTMLInputElement).focus()
+    // }
+
+    // if the input is not empty, focus the input with the empty value
+    if (element.value !== '') {
+      const nextEmptyIndex = otp.findIndex((value, idx) => idx > index && value === '')
+      if (nextEmptyIndex !== -1 && inputRefs.current[nextEmptyIndex]) {
+        inputRefs.current[nextEmptyIndex]?.focus()
+      }
     }
   }
 

@@ -33,7 +33,7 @@ describe('OTPInput', () => {
     expect(inputs[0].value).toBe('1');
   });
 
-  it('moves focus to next input after entering a digit', () => {
+  it('moves focus to input with empty value after entering a digit', () => {
     const { getAllByRole } = render(<OTPInput />);
     const inputs = getAllByRole('textbox') as HTMLInputElement[];
     fireEvent.change(inputs[0], { target: { value: '1' } });
