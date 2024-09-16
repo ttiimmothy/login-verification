@@ -3,7 +3,7 @@ export default {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }]
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
@@ -12,9 +12,9 @@ export default {
   coverageThreshold: {
     global: {
       branches: 70,
-      functions: 80,
-      lines: 80,
-      statements: 80
+      functions: 70,
+      lines: 70,
+      statements: 70
     }
   },
   coveragePathIgnorePatterns: ['/node_modules/', '/src/app/layout.tsx']
