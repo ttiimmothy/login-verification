@@ -90,6 +90,26 @@ describe('OTPInput', () => {
     });
   });
 
+  it('delete the  number when backspace key is pressed', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ message: 'Verification successful' }),
+    } as Response);
+
+    const { getAllByRole } = render(<OTPInput />);
+    const inputs = getAllByRole('textbox') as HTMLInputElement[];
+    inputs.forEach((input, index) => {
+      fireEvent.change(input, { target: { value: String(index + 1) } });
+    });
+
+    fireEvent.keyDown(inputs[5], { key: 'Backspace', code: 'Backspace' });
+
+    await waitFor(() => {
+      expect(inputs[4].value).toBeNull;
+    });
+  });
+
+
   it('submits the form when Enter key is pressed', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,

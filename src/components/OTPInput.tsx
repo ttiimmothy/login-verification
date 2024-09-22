@@ -68,8 +68,16 @@ export function OTPInput() {
     }
   }
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      e.preventDefault()
+      setOtp((prevOtp) => {
+        const newOtp = [...prevOtp]
+        newOtp[index - 1] = ''
+        return newOtp
+      })
+      inputRefs.current[index - 1]?.focus()
+    } else if (e.key === 'Enter') {
       e.preventDefault()
       handleSubmit()
     }
@@ -85,7 +93,7 @@ export function OTPInput() {
               key={index}
               type="text"
               maxLength={1}
-              onKeyDown={handleKeyDown}
+              onKeyDown={e => handleKeyDown(e, index)}
               value={data}
               ref={el => {
                 if (el) {
